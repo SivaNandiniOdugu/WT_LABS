@@ -1,6 +1,6 @@
 body{
     margin: 0;
-   background-color: hsl(0, 0%, 6%);
+    background-color: hsl(0, 0%, 12%);
   height:150vh;
  
   font-family: 'BebasNeue';
@@ -71,7 +71,9 @@ input[type="checkbox"]{
     font-size: 19px;
     font-weight: 500;
 }
-p{
-    font-size: 20px;
-    font-weight: 500;
+#ErrorMsg{
+    font-size: 18px;
+    font-weight:bold;
+     padding: 10px;
+   
 }

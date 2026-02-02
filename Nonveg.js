@@ -1,90 +1,21 @@
-function CookNow(){
-    console.log("Getting Started!")
-}
-let likecount=0;
-let Dislikecount=0;
-function LikeCount(){
-    likecount++;
-    document.getElementById("like-count").textContent=likecount;
-}
-function DislikeCount(){
-    Dislikecount++;
-    document.getElementById("dislike-count").textContent=Dislikecount;
+document.querySelectorAll(".like-btn").forEach(btn => {
+    btn.addEventListener("click", function (e) {
 
-}
+        const button = e.currentTarget; // ALWAYS the button
+        const postId = button.dataset.postId;
+        const likeCountSpan = button.querySelector(".like-count");
 
-const searchInput=document.querySelector('.search');
-const thumbnails=document.querySelectorAll('.Thumnails');
-searchInput.addEventListener('input',function(){
-    const query=searchInput.value.toLocaleLowerCase();
-    thumbnails.forEach(thumbnail=>{
-        const recipeName=thumbnail.querySelector('.recipe-content p span + span, .recipe-content p').textContent.toLocaleLowerCase();
-   if(recipeName.includes(query)){
-    thumbnail.style.display='';
-
-   }
-   else{
-    thumbnail.style.display='none';
-   }
-    })
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        fetch("like.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ post_id: postId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            likeCountSpan.textContent = data.likes;
+        })
+        .catch(err => console.error(err));
+    });
+});

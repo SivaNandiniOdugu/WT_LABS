@@ -1,0 +1,31 @@
+body{
+       margin: 0;
+}
+.items-container{
+    display: flex;
+    flex-direction: row;
+    gap:20px;
+    background-color: aliceblue;
+ 
+    height: 50px;
+    align-items: center;
+    justify-content: space-around;
+
+
+}
+li{
+ 
+ list-style: none;
+}
+a{
+    padding: 15px;
+     text-decoration: none;
+    color:black
+    
+}
+a:hover{
+    background-color: aqua;
+}
+h1{
+    text-align: center;
+}
