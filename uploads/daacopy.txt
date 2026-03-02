@@ -1,0 +1,238 @@
+[24-09-2025 07:19] +91 89194 88453: implement TSP import math
+from functools import lru_cache
+
+# Distance matrix
+dist = [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+]
+
+n = len(dist)
+full_mask = (1 << n) - 1  # all cities visited
+
+@lru_cache(None)
+def dp(mask, i):
+    """
+    Returns (minimum cost, path) starting at city i,
+    visiting all cities in 'mask', and returning to city 0.
+    """
+    # Base case: all cities visited → return to start
+    if mask == full_mask:
+        return dist[i][0], [i, 0]
+    best_cost = math.inf
+    best_path = []
+    # Try next city j
+    for j in range(n):
+        if not (mask & (1 << j)):  # if city j not visited
+            cost, path = dp(mask | (1 << j), j)
+            new_cost = cost + dist[i][j]
+            if new_cost < best_cost:
+                best_cost = new_cost
+                best_path = [i] + path
+
+    return best_cost, best_path
+
+# Start from city 0 with only city 0 visited
+cost, path = dp(1 << 0, 0)
+
+print("Minimum TSP cost:", cost)
+print("Path:", " -> ".join(map(str, path)), path)
+[11-10-2025 07:46] +91 89194 88453: n-queen problem: place n queens at chess board in non-attacking fashion..
+def print_board(B):
+    for row in B:
+        print(" ".join("Q" if col else "." for col in row))
+    print()
+
+def feasible(B, r, c,n):
+    for i in range(r-1,-1,-1):
+        j = r-i
+        if (B[i][c]) or ((c-j>=0) and B[i][c-j]) or ((c+j<n) and B[i][c+j]):
+            return False
+    return True
+
+def solve_n_queens(board, row, n):
+    if row == n:
+        print_board(board)
+        #return False #false means Continue
+    for col in range(n):
+        if feasible(board, row, col,n):
+            board[row][col] = 1
+            ok = solve_n_queens(board, row + 1, n)
+            board[row][col] = 0  # backtrack
+    #return False
+
+def n_queens(n):
+    board = [[0]*n for _ in range(n)]
+    solve_n_queens(board, 0, n)
+
+# Example usage
+n_queens(4)
+
+
+ #subset sum problem
+def dfs(arr, T, cur_ind, cur_sum, current_subset):
+    global solution
+    n = len(arr)
+    # ✅ Base case
+    if cur_sum == T:
+        solution = current_subset.copy()
+        print(solution)
+        return
+    # 🔁 Loop through choices from 'cur_ind' index
+    for j in range(cur_ind, n):
+        if cur_sum + arr[j] <=T:       
+          current_subset.append(arr[j])    # Choose arr[j]
+          dfs(arr, T, j + 1, cur_sum + arr[j], current_subset)
+          current_subset.pop()  # backtrack
+#.......................................................................
+arr = [3, 34, 4, 12, 5, 2]
+T = 9
+solution = []
+dfs(arr, T, 0, 0, [])
+[17-10-2025 12:42] +91 6305 374 577: # Branch and Bound for Travelling Salesman Problem
+n = 4  # number of cities
+graph = [ [0, 10, 15, 35],[10, 0, 25, 20], [15, 25, 0, 20],  [35, 20, 20, 0]]
+
+mincost = float('inf')
+best_path = []
+
+def TSP_BB(visited, curr_city, count, cost):
+    global mincost, best_path, n, graph
+
+    # Base case: all cities visited + return path exists
+    if count == n and graph[curr_city][0] > 0:
+        total_cost = cost + graph[curr_city][0]
+        if total_cost < mincost:
+            mincost = total_cost
+            best_path = visited[:] + [0]
+            # Print updated minimum cost and path (1-indexed)
+            print(f"New Minimum Cost: {mincost}")
+            print(f"Best Path (1-indexed): {' → '.join(map(lambda x: str(x+1), best_path))}")
+
+        return
+
+    # Try next cities
+    for i in range(n):
+        if i not in visited and graph[curr_city][i] > 0:
+            new_cost = cost + graph[curr_city][i]
+
+            # Branch & Bound → prune if exceeds mincost
+            if new_cost < mincost:
+                # visited[count]=i
+                # TSP_BB(visited, i, count + 1, new_cost)
+                # visited[count]=-1
+                TSP_BB(visited+[i], i, count + 1, new_cost)
+# ---- Run ----
+start_city = 0
+#visited = [] #[-1] * n
+visited = [start_city]
+TSP_BB(visited, start_city, 1, 0)
+
+print("\nFinal Minimum Cost:", mincost)
+print("Final Best Path (1-indexed):", ' → '.join(map(lambda x: str(x+1), best_path)))
+[17-10-2025 12:43] +91 97030 60818: # Example graph
+G = [
+    [0, 10, 15, 35],
+    [10, 0, 25, 20],
+    [15, 25, 0, 20],
+    [35, 20, 20, 0]
+]
+
+n = len(G)
+start = 0  # City 1
+min_cost = float('inf')
+best_path = []
+
+def feasible(visited, city, count):
+    return city not in visited[:count]
+
+def Tsp_btk(visited, ci, count, cost):
+    global G, n, start, min_cost, best_path
+    if count == n:
+        if G[ci][start] > 0:
+            total_cost = cost + G[ci][start]
+            if total_cost < min_cost:
+                min_cost = total_cost
+                best_path = visited[:] + [start]
+        return
+    
+    for i in range(1, n):
+        if feasible(visited, i, count) and G[ci][i] > 0:
+            visited[count] = i
+            Tsp_btk(visited, i, count+1, cost + G[ci][i])
+            visited[count] = -1
+
+# Initialize
+visited = [-1]*n
+visited[0] = start
+Tsp_btk(visited, start, 1, 0)
+
+# Convert 0-indexed to 1-indexed for output
+print("Minimum Cost:", min_cost)
+print("Best Path:", [city+1 for city in best_path])
+
+ # Print all combination using backtracking
+def backtrack(selected, cur_Ind):
+    global nums, n
+    #print(selected) # all combination
+    if cur_Ind == n: 
+       print(selected) # all combinatinetorial solution
+    
+    # Explore next elements
+    for i in range(cur_Ind, n):
+        selected.append(nums[i])
+        backtrack(selected, i + 1)  # move to next index
+        selected.pop()  # backtrack
+
+# Example
+nums = [1, 2, 3]
+n = len(nums)
+backtrack([], 0)
+[24-10-2025 07:42] +91 89194 88453: # Print all permutation using backtracking
+def backtrack(selected, count):
+    global nums, n
+    if count == n: 
+       print(selected) # all permutation
+    
+    # Explore next elements
+    for i in range(n):
+      if nums[i] not in selected:
+        selected.append(nums[i])
+        backtrack(selected, count + 1)  # move to next index
+        selected.pop()  # backtrack
+
+# Example
+nums = [1, 2, 3]
+n = len(nums)
+backtrack([], 0)
+[25-10-2025 10:22] +91 89194 88453: # Graph coloring using backtracking
+def is_valid(u, c): #"""Check if assigning color c to vertex u is valid"""
+    for i in range(u):
+        if d[i][u] == 1 and color[i] == c:
+            return False
+    return True
+
+def coloring(color,u):
+    global d, k
+    if u == n:
+        print("sol",color)
+        return
+    for c in range(1, k + 1):
+        if is_valid(u, c):
+            color.append(c)
+            coloring(color,u + 1)
+            color.pop()  # backtrack
+#.........................................................................
+# Adjacency matrix
+d = [
+    [0, 1, 1, 1],
+    [1, 0, 1, 1],
+    [1, 1, 0, 0],
+    [1, 1, 0, 0]]
+n = 4       # number of vertices
+k = 3       # number of colors
+color = []
+print("Graph Coloring Solutions:")
+coloring(color,0)

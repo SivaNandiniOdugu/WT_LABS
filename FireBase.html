@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Google Login</title>
+</head>
+<body>
+
+  <h2>Firebase Google OAuth Login</h2>
+  <button id="loginBtn">Login with Google</button>
+  <button id="logoutBtn">Logout</button>
+
+  <p id="userInfo"></p>
+
+  <script type="module">
+
+    // Import Firebase modules  
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithPopup, 
+      GoogleAuthProvider,
+      signOut,
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+    // 🔹 Paste your Firebase config here
+    const firebaseConfig = {
+      apiKey: "AIzaSyD7rAPnAT7LhI43cJ4UOUDie-QII7S2CJg",
+      authDomain: "myproject1234-6debc.firebaseapp.com",
+      projectId: "myproject1234-6debc",
+      storageBucket: "myproject1234-6debc.firebasestorage.app",
+      messagingSenderId: "627812899825",
+      appId: "1:627812899825:web:c2da3afb1cc7f7b0ba0250"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Create Google provider
+    const provider = new GoogleAuthProvider();
+
+    // Login function
+    document.getElementById("loginBtn").addEventListener("click", () => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          document.getElementById("userInfo").innerHTML =
+            "Welcome " + user.displayName + "<br>Email: " + user.email;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+
+    // Logout function
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      signOut(auth).then(() => {
+        document.getElementById("userInfo").innerHTML = "Logged out";
+      });
+    });
+
+    // Auto detect login state
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("userInfo").innerHTML =
+          "Welcome " + user.displayName + "<br>Email: " + user.email;
+      }
+    });
+
+  </script>
+
+</body>
+</html>
+
+
+
+<!-- 
+const firebaseConfig = {
+  apiKey: "AIzaSyD7rAPnAT7LhI43cJ4UOUDie-QII7S2CJg",
+  authDomain: "myproject1234-6debc.firebaseapp.com",
+  projectId: "myproject1234-6debc",
+  storageBucket: "myproject1234-6debc.firebasestorage.app",
+  messagingSenderId: "627812899825",
+  appId: "1:627812899825:web:c2da3afb1cc7f7b0ba0250"
+}; -->

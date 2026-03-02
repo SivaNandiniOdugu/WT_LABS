@@ -1,1 +1,9 @@
 My name is Billa B for Billa okade sainyam la Vacchanilla
+
+
+//git commands
+git status
+git add filename
+git add .
+git commit-m 
+git push

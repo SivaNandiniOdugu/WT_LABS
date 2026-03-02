@@ -6,8 +6,10 @@ fclose($file);
  echo '<br>';
 readfile("TEXT.txt");
 echo'<br>';
+
 echo file_get_contents("TEXT.txt");
  echo '<br>';
+
 $file=fopen("TEXT.txt","w");
 $data=file_get_contents("./uploads/Customer Purchasing Behaviors.csv");
 $rewrite=fwrite($file,$data);
