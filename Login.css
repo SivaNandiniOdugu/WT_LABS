@@ -21,12 +21,12 @@
         border-radius: 7px;
         padding:7px;
         font-size: 18px;
-        background-color: blueviolet;
+        background-color: rgb(226, 43, 43);
         color:white;
         width:100px;
         cursor:pointer;
     }
     button:hover{
         
-        background-color: rgb(99, 39, 134);
+        background-color: rgb(173, 24, 24);
     }
